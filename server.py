@@ -1,6 +1,6 @@
 #  coding: utf-8 
 import socketserver
-
+from datetime import datetime
 # Copyright 2013 Abram Hindle, Eddie Antonio Santos
 # 
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -41,16 +41,18 @@ class MyWebServer(socketserver.BaseRequestHandler):
             with open('./www/base.css','r', encoding="utf-8") as f:
                 css = f.read()
                 self.request.sendall(bytearray("HTTP/1.1 200 OK\r\n",'utf-8'))
+                self.request.sendall(bytearray(str(datetime.now())+"\r\n",'utf-8')
+                self.request.sendall(bytearray("Content-Type: text/css\r\n",'utf-8')))
                 self.request.sendall(bytearray("Connection: Closed\r\n",'utf-8'))
-                self.request.sendall(bytearray("Content-Type: text/css\r\n",'utf-8'))
                 self.request.sendall(bytearray(css, 'utf-8'))
 
         elif location == bytearray("/",'utf-8') or location == bytearray("/index.html",'utf-8'):
             with open('./www/index.html','r', encoding="utf-8") as f:
                 html = f.read()
                 self.request.sendall(bytearray("HTTP/1.1 200 OK\r\n",'utf-8'))
-                self.request.sendall(bytearray("Connection: Closed\r\n",'utf-8'))
+                self.request.sendall(bytearray(str(datetime.now())+"\r\n",'utf-8'))
                 self.request.sendall(bytearray("Content-Type: text/html\r\n",'utf-8'))
+                self.request.sendall(bytearray("Connection: Closed\r\n",'utf-8'))
                 self.request.sendall(bytearray(html, 'utf-8'))
             
 
