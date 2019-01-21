@@ -30,6 +30,7 @@ from datetime import datetime
 
 class MyWebServer(socketserver.BaseRequestHandler):
     def handle(self):
+        print("request")
         self.data = self.request.recv(1024).strip()
         print ("Got a request of: %s\n" % self.data)
         requests = self.data.split()
@@ -38,57 +39,57 @@ class MyWebServer(socketserver.BaseRequestHandler):
         if location == bytearray("/base.css",'utf-8'):
             with open('./www/base.css','r', encoding="utf-8") as f:
                 css = f.read()
-                req= '''HTTP/1.1 200 OK
-                    Content-Type: text/css
-                    Connection: Closed\r\n
-                    '''+css
-                self.request.sendall(bytearray(req, 'utf-8'))
+                res='''HTTP/1.1 200 OK/r/n
+                    Content-Type: text/css/r/n
+                    Connection: Closed/r/n''' +css
+
+                 self.request.sendall(bytearray(req, 'utf-8'))
+
         elif location == bytearray("/",'utf-8') or location == bytearray("/index.html",'utf-8'):
             with open('./www/index.html','r', encoding="utf-8") as f:
                 html = f.read()
-                req='''HTTP/1.1 200 OK
-                   Content-Type: text/html
-                   Connection: Closed\r\n
-                '''+html
+                res='''HTTP/1.1 200 OK/r/n
+                   Content-Type: text/htmk/r/n
+                   Connection: Closed/r/n''' +html
+                
                 self.request.sendall(bytearray(req, 'utf-8'))
+            
 
-        # deep
+
+        elif location == bytearray("/deep/",'utf-8') or location == bytearray("/deep/index.html",'utf-8'):
+            with open('./www/deep/index.html','r', encoding="utf-8") as f:
+                html = f.read()
+                self.request.sendall(bytearray("HTTP/1.1 ",'utf-8'))
+                self.request.sendall(bytearray("200 OK\n",'utf-8'))
+                self.request.sendall(bytearray("Content-Type: text/html\n",'utf-8'))
+                self.request.sendall(bytearray("Connection: Closed\n",'utf-8'))
+                self.request.sendall(bytearray(html, 'utf-8'))
+
+           
+            
         elif location == bytearray("/deep/deep.css",'utf-8'):
             with open('./www/deep/deep.css','r', encoding="utf-8") as f:
                 css = f.read()
-                req= '''HTTP/1.1 200 OK
-                    Content-Type: text/css
-                    Connection: Closed\r\n
-                    '''+css
-                self.request.sendall(bytearray(req, 'utf-8'))
-        elif location == bytearray("/deep/", 'utf-8') or location == bytearray("/deep/index.html", 'utf-8'):
-            with open('./www/deep/index.html', 'r', encoding="utf-8") as f:
-                html = f.read()
-                req = '''HTTP/1.1 200 OK
-                           Content-Type: text/html
-                           Connection: Closed\r\n
-                                       ''' + html
-                self.request.sendall(bytearray(req, 'utf-8'))
+                self.request.sendall(bytearray("HTTP/1.1 ",'utf-8'))
+                self.request.sendall(bytearray("200 OK\n",'utf-8'))
+                self.request.sendall(bytearray("Content-Type: text/css\n",'utf-8'))
+                self.request.sendall(bytearray("Connection: Closed\n",'utf-8'))
+                self.request.sendall(bytearray(css, 'utf-8'))
 
-        #hardcode
-        elif location == bytearray("/hardcode/deep.css",'utf-8'):
-            with open('./www/hardcode/deep.css','r', encoding="utf-8") as f:
-                css = f.read()
-                req = '''HTTP/1.1 200 OK
-                Content-Type: text/css
-                Connection: Closed\r\n
-                ''' + css
-                self.request.sendall(bytearray(req, 'utf-8'))
         elif location == bytearray("/hardcode/",'utf-8') or location == bytearray("/hardcode/index.html",'utf-8'):
             with open('./www/hardcode/index.html','r', encoding="utf-8") as f:
                 html = f.read()
-                req = '''HTTP/1.1 200 OK
-                Content-Type: text/html
-                Connection: Closed\r\n
-                ''' + html
-                self.request.sendall(bytearray(req, 'utf-8'))
+                self.request.sendall(bytearray("HTTP/1.1 ",'utf-8'))
+                self.request.sendall(bytearray("200 OK\n",'utf-8'))
+                self.request.sendall(bytearray("Content-Type: text/html\n",'utf-8'))
+                self.request.sendall(bytearray("Connection: Closed\n",'utf-8'))  
+                self.request.sendall(bytearray(html,'utf-8'))
 
-
+        elif location == bytearray("/hardcode/deep.css",'utf-8'):
+            self.request.sendall(bytearray("HTTP/1.1 ",'utf-8'))
+            self.request.sendall(bytearray("200 OK\n",'utf-8'))
+            self.request.sendall(bytearray("Content-Type: text/css\n",'utf-8'))
+            self.request.sendall(bytearray("Connection: Closed\n",'utf-8'))
          
         else:
             self.request.sendall(bytearray("HTTP/1.1 ",'utf-8'))
