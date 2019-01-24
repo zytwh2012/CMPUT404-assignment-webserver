@@ -34,76 +34,88 @@ class MyWebServer(socketserver.BaseRequestHandler):
         print ("Got a request of: %s\n" % self.data)
         requests = self.data.split()
         location = requests[1]
-        
-        if location == bytearray("/base.css",'utf-8'):
-            with open('./www/base.css','r', encoding="utf-8") as f:
-                css = f.read()
-                req= '''HTTP/1.1 200 OK
-                    Content-Type: text/css
-                    Connection: Closed\r\n
-                    '''+css
-                self.request.sendall(bytearray(req, 'utf-8'))
-        elif location == bytearray("/",'utf-8') or location == bytearray("/index.html",'utf-8'):
-            with open('./www/index.html','r', encoding="utf-8") as f:
-                html = f.read()
-                req='''HTTP/1.1 200 OK
-                   Content-Type: text/html
-                   Connection: Closed\r\n
-                '''+html
-                self.request.sendall(bytearray(req, 'utf-8'))
-
-        # deep
-        elif location == bytearray("/deep/deep.css",'utf-8'):
-            with open('./www/deep/deep.css','r', encoding="utf-8") as f:
-                css = f.read()
-                req= '''HTTP/1.1 200 OK
-                    Content-Type: text/css
-                    Connection: Closed\r\n
-                    '''+css
-                self.request.sendall(bytearray(req, 'utf-8'))
-        elif location == bytearray("/deep/", 'utf-8') or location == bytearray("/deep/index.html", 'utf-8'):
-            with open('./www/deep/index.html', 'r', encoding="utf-8") as f:
-                html = f.read()
-                req = '''HTTP/1.1 200 OK
-                           Content-Type: text/html
-                           Connection: Closed\r\n
-                                       ''' + html
-                self.request.sendall(bytearray(req, 'utf-8'))
-
-        #hardcode
-        elif location == bytearray("/hardcode/deep.css",'utf-8'):
-            with open('./www/hardcode/deep.css','r', encoding="utf-8") as f:
-                css = f.read()
-                req = '''HTTP/1.1 200 OK
-                Content-Type: text/css
-                Connection: Closed\r\n
-                ''' + css
-                self.request.sendall(bytearray(req, 'utf-8'))
-        elif location == bytearray("/hardcode/",'utf-8') or location == bytearray("/hardcode/index.html",'utf-8'):
-            with open('./www/hardcode/index.html','r', encoding="utf-8") as f:
-                html = f.read()
-                req = '''HTTP/1.1 200 OK
-                Content-Type: text/html
-                Connection: Closed\r\n
-                ''' + html
-                self.request.sendall(bytearray(req, 'utf-8'))
-
-
-         
+        if requests[0] != bytearray("GET", 'utf-8'):
+            res = "405 Method Not Allowed\nConnection: Closed\n"
+            self.request.sendall(bytearray(res, 'utf-8'))
         else:
-            self.request.sendall(bytearray("HTTP/1.1 ",'utf-8'))
-            self.request.sendall(bytearray("404 Not FOUND\n",'utf-8'))
-            self.request.sendall(bytearray("Connection: Closed\n",'utf-8'))
-            self.request.sendall(bytearray('''
-                                            <!DOCTYPE HTML">
-                                            <html>
-                                            <head>
-                                            <title>404 Page Not Found</title>
-                                            </head>
-                                            <body>
-                                            <h1>Not Found</h1>
-                                            </body>
-                                            </html>''','utf-8'))
+            if location == bytearray("/base.css",'utf-8'):
+                with open('./www/base.css','r', encoding="utf-8") as f:
+                    css = f.read()
+                    req= '''HTTP/1.1 200 OK
+Content-Type: text/css
+Connection: Closed\r\n
+    '''+css
+                    self.request.sendall(bytearray(req, 'utf-8'))
+            elif location == bytearray("/",'utf-8') or location == bytearray("/index.html",'utf-8'):
+                with open('./www/index.html','r', encoding="utf-8") as f:
+                    html = f.read()
+                    req='''HTTP/1.1 200 OK
+Content-Type: text/html
+Connection: Closed\r\n
+                    '''+html
+                    self.request.sendall(bytearray(req, 'utf-8'))
+            
+            # deep
+            elif location == bytearray("/deep/deep.css",'utf-8'):
+                with open('./www/deep/deep.css','r', encoding="utf-8") as f:
+                    css = f.read()
+                    req= '''HTTP/1.1 200 OK
+Content-Type: text/css
+Connection: Closed\r\n
+                        '''+css
+                    self.request.sendall(bytearray(req, 'utf-8'))
+            elif location == bytearray("/deep/", 'utf-8') or location == bytearray("/deep/index.html", 'utf-8'):
+                with open('./www/deep/index.html', 'r', encoding="utf-8") as f:
+                    html = f.read()
+                    req = '''HTTP/1.1 200 OK
+Content-Type: text/html
+Connection: Closed\r\n
+                     ''' + html
+                    self.request.sendall(bytearray(req, 'utf-8'))
+            # deep redir      
+            elif location == bytearray("/deep", 'utf-8'):
+                req = '''HTTP/1.1 301 Moved Permanently
+Location: http://127.0.0.1:8080/deep/ \r\n
+'''
+                self.request.sendall(bytearray(req, 'utf-8'))     
+
+            #hardcode
+            elif location == bytearray("/hardcode/deep.css",'utf-8'):
+                with open('./www/hardcode/deep.css','r', encoding="utf-8") as f:
+                    css = f.read()
+                    req = '''HTTP/1.1 200 OK
+Content-Type: text/css
+Connection: Closed\r\n
+                    ''' + css
+                    self.request.sendall(bytearray(req, 'utf-8'))
+            elif location == bytearray("/hardcode/",'utf-8') or location == bytearray("/hardcode/index.html",'utf-8'):
+                with open('./www/hardcode/index.html','r', encoding="utf-8") as f:
+                    html = f.read()
+                    req = '''HTTP/1.1 200 OK
+Content-Type: text/html
+Connection: Closed\r\n
+                    ''' + html
+                    self.request.sendall(bytearray(req, 'utf-8'))
+            elif location == bytearray("/hardcode", 'utf-8'):
+                req = '''HTTP/1.1 301 Moved Permanently
+Location: http://127.0.0.1:8080/hardcode/ \r\n
+'''
+                self.request.sendall(bytearray(req, 'utf-8'))
+            else:
+                req = '''HTTP/1.1 404 Not FOUND
+Content-Type: text/html
+Connection: Closed\r\n
+
+<!DOCTYPE HTML">
+<html>
+<head>
+<title>404 Page Not Found</title>
+</head>
+<body>
+<h1>Page Not Found</h1>
+</body>
+</html>'''
+                self.request.sendall(bytearray(req, 'utf-8'))
 
 if __name__ == "__main__":
     HOST, PORT = "localhost", 8080
